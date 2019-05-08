@@ -8,19 +8,41 @@ class ConnectionsPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      targetUrl: 'https://graph.irail.be/sncb/connections?departureTime=2019-05-06T14:39:00.000Z',
       graph: [],
       style: {
         'border-style': 'solid'
       }
     };
+    this.getNextData = this.getNextData.bind(this);
+    this.getPreviousData = this.getPreviousData.bind(this);
+    this.fetchData = this.fetchData.bind(this);
   }
 
   componentDidMount() {
-    axios.get(`https://graph.irail.be/sncb/connections?departureTime=2019-05-06T14:39:00.000Z`)
+    this.fetchData();
+  }
+
+  getPreviousData() {
+    this.setState({
+      targetUrl: this.state.previousPage,
+      graph: []
+    });
+    this.fetchData();
+  }
+
+  getNextData() {
+    this.setState({
+      targetUrl: this.state.previousPage,
+      graph: []
+    });
+    this.fetchData();
+  }
+
+  fetchData() {
+    axios.get(this.state.targetUrl)
       .then(res => {
-        const nextPage = res.data["hydra:next"];
-        const previousPage = res.data["hydra:previous"];
-        this.setState({ graph: res.data["@graph"] });
+        this.setState({ graph: res.data["@graph"], nextpage: res.data["hydra:next"], previousPage: res.data["hydra:previous"] });
       });
   }
 
@@ -43,20 +65,25 @@ class ConnectionsPage extends React.Component {
     }
 
     return (
-      <table>
-        <tr>
-          <th>Connection ID</th>
-          <th>Direction</th>
-          <th>Departure Stop</th>
-          <th>Arrival Stop</th>
-          <th>Departure Time</th>
-          <th>Arrival Time</th>
-          <th>GTFS</th>
-          <th>Departure Delay</th>
-          <th>Arrival Delay</th>
-        </tr>
-        {items}
-      </table>
+      <div>
+        <p>Selected time: {this.state.targetUrl.split("departureTime=")[1]}</p>
+        <button type="button" onClick={this.getPreviousData}>←</button>
+        <button type="button" onClick={this.getNextData}>→</button>
+        <table>
+          <tr>
+            <th>Connection ID</th>
+            <th>Direction</th>
+            <th>Departure Stop</th>
+            <th>Arrival Stop</th>
+            <th>Departure Time</th>
+            <th>Arrival Time</th>
+            <th>GTFS</th>
+            <th>Departure Delay</th>
+            <th>Arrival Delay</th>
+          </tr>
+          {items}
+        </table>
+      </div>
     )
   }
 }
