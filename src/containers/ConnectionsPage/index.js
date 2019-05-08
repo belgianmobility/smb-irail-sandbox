@@ -1,6 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import propTypes from 'prop-types';
 import axios from 'axios';
 import queryString from 'query-string';
 import Datetime from 'react-datetime';
@@ -10,6 +8,9 @@ import s from './style.module.scss';
 class ConnectionsPage extends React.Component {
   constructor(props) {
     super(props);
+    const value = queryString.parse(props.location.search);
+    const departureTime = value.token || "2019-05-06T14:39:00.000Z";
+    const url = "https://graph.irail.be/sncb/connections?departureTime=" + departureTime;
     this.state = {
       targetUrl: url,
       timestamp: departureTime,
@@ -23,6 +24,7 @@ class ConnectionsPage extends React.Component {
   }
 
   componentDidMount() {
+    document.title = "Linked Connections | Sandbox";
     this.fetchData(this.state.targetUrl);
   }
 
@@ -57,7 +59,7 @@ class ConnectionsPage extends React.Component {
   }
 
   render() {
-    const { graph, style } = this.state;
+    const { graph } = this.state;
     const items = []
 
     for (const [index, connection] of graph.entries()) {
@@ -76,7 +78,6 @@ class ConnectionsPage extends React.Component {
 
     return (
       <div>
-        <title>Linked Connections | Sandbox</title>
         <h1>Quick showcase</h1>
         <p>This page loads all the data for the connections departing at a given time and displays it all in a table.</p>
         <h3>See the API request</h3>
