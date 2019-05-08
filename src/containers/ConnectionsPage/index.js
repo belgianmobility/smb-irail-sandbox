@@ -2,7 +2,10 @@ import React from 'react';
 import propTypes from 'prop-types';
 import axios from 'axios';
 import queryString from 'query-string';
-import './style.module.scss';
+import Datetime from 'react-datetime';
+import ConnectionsHeader from '../../components/ConnectionsHeader';
+
+import s from './style.module.scss';
 
 class ConnectionsPage extends React.Component {
   constructor(props) {
@@ -20,6 +23,7 @@ class ConnectionsPage extends React.Component {
   }
 
   componentDidMount() {
+    document.title = 'Linked Connections | Sandbox';
     this.fetchData();
   }
 
@@ -52,7 +56,7 @@ class ConnectionsPage extends React.Component {
   }
 
   render() {
-    const { graph, targetUrl } = this.state;
+    const { graph, targetUrl, timestamp } = this.state;
     const items = [];
 
     /* eslint-disable no-restricted-syntax */
@@ -78,10 +82,18 @@ class ConnectionsPage extends React.Component {
 
     return (
       <div>
+        <ConnectionsHeader targetUrl={targetUrl} timestamp={timestamp} />
         <p>
-Selected time:
-          {targetUrl.split('departureTime=')[1]}
+Selected date:
+          <b>{new Date(timestamp).toString()}</b>
         </p>
+        <Datetime
+          className={s.datePicker}
+          ref={this.datePicker}
+          input={false}
+          defaultValue={new Date(timestamp)}
+          onChange={this.onDateSelected}
+        />
         <button type="button" onClick={this.getPreviousData}>←</button>
         <button type="button" onClick={this.getNextData}>→</button>
         <table>
