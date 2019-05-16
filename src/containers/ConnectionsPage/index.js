@@ -17,10 +17,6 @@ class ConnectionsPage extends React.Component {
       graph: []
     };
     this.datePicker = React.createRef();
-    this.getNextData = this.getNextData.bind(this);
-    this.getPreviousData = this.getPreviousData.bind(this);
-    this.fetchData = this.fetchData.bind(this);
-    this.onDateSelected = this.onDateSelected.bind(this);
   }
 
   componentDidMount() {
@@ -28,15 +24,15 @@ class ConnectionsPage extends React.Component {
     this.fetchData(this.state.targetUrl);
   }
 
-  getPreviousData() {
+  getPreviousData = () => {
     this.fetchData(this.state.previousPage);
   }
 
-  getNextData() {
+  getNextData = () => {
     this.fetchData(this.state.nextPage);
   }
 
-  fetchData(targetUrl) {
+  fetchData = (targetUrl) => {
     const timestamp = targetUrl.split("?departureTime=")[1];
 
     this.setState({
@@ -53,7 +49,7 @@ class ConnectionsPage extends React.Component {
       });
   }
 
-  onDateSelected(date) {
+  onDateSelected = (date) => {
     const url = "https://graph.irail.be/sncb/connections?departureTime=" + date.toISOString();
     this.fetchData(url);
   }
