@@ -1,0 +1,8 @@
+{
+  "globals": {
+    "fixture": true
+  },
+  "rules": {
+    "no-unused-expressions": "off"
+  }
+}

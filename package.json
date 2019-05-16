@@ -1,0 +1,54 @@
+{
+  "name": "smb-irail-sandbox",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "lighthouse": "^5.0.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-scripts": "3.0.1",
+    "testcafe": "^1.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "CI=TRUE react-scripts test --coverage --ci --reporters=default",
+    "eject": "react-scripts eject",
+    "lint": "eslint ./ --quiet",
+    "lint:fix": "eslint ./ --quiet --fix",
+    "storybook": "start-storybook -p 9001 -c .storybook",
+    "build-storybook": "build-storybook -c .storybook -o storybook",
+    "test:coverage": "CI=TRUE react-scripts test --coverage",
+    "test:integration": "testcafe chrome:headless tests/**/*",
+    "test:watch": "react-scripts test",
+    "lighthouse": "mkdir -p lighthouse && lighthouse --output json --output html --output-path ./lighthouse/index.json"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@storybook/addon-actions": "^5.0.11",
+    "@storybook/addon-info": "^5.0.11",
+    "@storybook/addon-knobs": "^5.0.11",
+    "@storybook/addon-links": "^5.0.11",
+    "@storybook/react": "^5.0.11",
+    "babel-loader": "8.0.5",
+    "eslint-config-airbnb": "^17.1.0"
+  },
+  "lighthouseConfig": {
+    "first-meaningful-paint": 3200,
+    "estimated-input-latency": 4700
+  }
+}

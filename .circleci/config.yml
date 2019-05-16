@@ -1,0 +1,23 @@
+version: 2.1
+
+
+orbs:
+  frontend: nextmoov/frontend@1.0.32
+
+
+workflows:
+  frontend-validation:
+    jobs:
+      - frontend/test:
+          context: Main
+      - frontend/stage:
+          context: Main
+          requires:
+            - frontend/test
+          filters:
+            branches:
+              only:
+                - develop
+                - master
+                - /feature\/.*/
+                - /hotfix\/.*/
