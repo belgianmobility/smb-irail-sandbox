@@ -1,4 +1,5 @@
 import React from 'react';
+import propTypes from 'prop-types';
 import axios from 'axios';
 import queryString from 'query-string';
 import './style.module.scss';
@@ -7,11 +8,11 @@ class ConnectionsPage extends React.Component {
   constructor(props) {
     super(props);
     const value = queryString.parse(props.location.search);
-    const departureTime = value.token || "2019-05-06T14:39:00.000Z";
-    const url = "https://graph.irail.be/sncb/connections?departureTime=" + departureTime;
+    const departureTime = value.token || '2019-05-06T14:39:00.000Z';
+    const url = `https://graph.irail.be/sncb/connections?departureTime=${departureTime}`;
     this.state = {
       targetUrl: url,
-      graph: []
+      graph: [],
     };
     this.getNextData = this.getNextData.bind(this);
     this.getPreviousData = this.getPreviousData.bind(this);
@@ -23,51 +24,64 @@ class ConnectionsPage extends React.Component {
   }
 
   getPreviousData() {
+    const { previousPage } = this.state;
     this.setState({
-      targetUrl: this.state.previousPage,
-      graph: []
+      targetUrl: previousPage,
+      graph: [],
     });
     this.fetchData();
   }
 
   getNextData() {
+    const { nextpage } = this.state;
     this.setState({
-      targetUrl: this.state.previousPage,
-      graph: []
+      targetUrl: nextpage,
+      graph: [],
     });
     this.fetchData();
   }
 
   fetchData() {
-    axios.get(this.state.targetUrl)
-      .then(res => {
-        const newURL = "?departureTime=" + this.state.targetUrl.split("?departureTime=")[1];
+    const { targetUrl } = this.state;
+    axios.get(targetUrl)
+      .then((res) => {
+        const newURL = `?departureTime=${targetUrl.split('?departureTime=')[1]}`;
         window.history.pushState({}, null, newURL);
-        this.setState({ graph: res.data["@graph"], nextpage: res.data["hydra:next"], previousPage: res.data["hydra:previous"] });
+        this.setState({ graph: res.data['@graph'], nextpage: res.data['hydra:next'], previousPage: res.data['hydra:previous'] });
       });
   }
 
   render() {
-    const { graph } = this.state;
-    const items = []
+    const { graph, targetUrl } = this.state;
+    const items = [];
 
+    /* eslint-disable no-restricted-syntax */
     for (const [index, connection] of graph.entries()) {
-      items.push(<tr row={index}>
-          <td><a href={connection["@id"]}>{connection["@id"].split("/").pop()}</a></td>
-          <td>{connection["direction"]}</td>
-          <td><a href={connection["departureStop"]}>{connection["departureStop"].split("/").pop()}</a></td>
-          <td><a href={connection["arrivalStop"]}>{connection["arrivalStop"].split("/").pop()}</a></td>
-          <td>{connection["departureTime"].split(".")[0].replace("T", "\n")}</td>
-          <td>{connection["arrivalTime"].split(".")[0].replace("T", "\n")}</td>
-          <td><a href={connection["gtfs:trip"]}>Trip</a><br/><a href={connection["gtfs:route"]}>Route</a></td>
-          <td>{connection["departureDelay"] || "0"}</td>
-          <td>{connection["arrivalDelay"] || "0"}</td>
-        </tr>)
+      items.push(
+        <tr row={index}>
+          <td><a href={connection['@id']}>{connection['@id'].split('/').pop()}</a></td>
+          <td>{connection.direction}</td>
+          <td><a href={connection.departureStop}>{connection.departureStop.split('/').pop()}</a></td>
+          <td><a href={connection.arrivalStop}>{connection.arrivalStop.split('/').pop()}</a></td>
+          <td>{connection.departureTime.split('.')[0].replace('T', '\n')}</td>
+          <td>{connection.arrivalTime.split('.')[0].replace('T', '\n')}</td>
+          <td>
+            <a href={connection['gtfs:trip']}>Trip</a>
+            <br />
+            <a href={connection['gtfs:route']}>Route</a>
+          </td>
+          <td>{connection.departureDelay || '0'}</td>
+          <td>{connection.arrivalDelay || '0'}</td>
+        </tr>,
+      );
     }
 
     return (
       <div>
-        <p>Selected time: {this.state.targetUrl.split("departureTime=")[1]}</p>
+        <p>
+Selected time:
+          {targetUrl.split('departureTime=')[1]}
+        </p>
         <button type="button" onClick={this.getPreviousData}>←</button>
         <button type="button" onClick={this.getNextData}>→</button>
         <table>
@@ -87,9 +101,13 @@ class ConnectionsPage extends React.Component {
           </tbody>
         </table>
       </div>
-    )
+    );
   }
 }
+
+ConnectionsPage.propTypes = {
+  location: propTypes.instanceOf(Object).isRequired,
+};
 
 
 export default ConnectionsPage;
