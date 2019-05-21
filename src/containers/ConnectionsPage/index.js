@@ -15,6 +15,7 @@ class ConnectionsPage extends React.Component {
     const url = `https://graph.irail.be/sncb/connections?departureTime=${departureTime}`;
     this.state = {
       targetUrl: url,
+      timestamp: departureTime,
       graph: [],
     };
     this.getNextData = this.getNextData.bind(this);

@@ -3,13 +3,13 @@ import propTypes from 'prop-types';
 
 import s from './style.module.scss';
 
-const ConnectionsHeader = function ConnectionsHeader(props) {
+const ConnectionsHeader = (props) => {
   const { targetUrl, timestamp } = props;
-  return React.createElement(
+  return (
     <div>
       <h1>Quick showcase</h1>
       <p>
-This page loads all the data for the connections departing
+      This page loads all the data for the connections departing
       at a given time and displays it all in a table.
       </p>
       <h3>See the API request</h3>
@@ -24,13 +24,13 @@ This page loads all the data for the connections departing
           </a>
         </div>
       </div>
-    </div>,
+    </div>
   );
 };
 
 ConnectionsHeader.propTypes = {
-  targetUrl: propTypes.instanceOf(String).isRequired,
-  timestamp: propTypes.instanceOf(String).isRequired,
+  targetUrl: propTypes.string.isRequired,
+  timestamp: propTypes.string.isRequired,
 };
 
 export default ConnectionsHeader;
