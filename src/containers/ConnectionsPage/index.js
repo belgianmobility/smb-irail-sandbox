@@ -18,9 +18,6 @@ class ConnectionsPage extends React.Component {
       timestamp: departureTime,
       graph: [],
     };
-    this.getNextData = this.getNextData.bind(this);
-    this.getPreviousData = this.getPreviousData.bind(this);
-    this.fetchData = this.fetchData.bind(this);
   }
 
   componentDidMount() {
@@ -28,7 +25,15 @@ class ConnectionsPage extends React.Component {
     this.fetchData();
   }
 
-  getPreviousData() {
+  onDateSelected = (moment) => {
+    const timestamp = moment.format('Y-MM-DDTHH:MM:SS.000\\Z');
+    this.setState({
+      timestamp,
+      targetUrl: `https://graph.irail.be/sncb/connections?departureTime=${timestamp}`,
+    }, this.fetchData);
+  }
+
+  getPreviousData = () => {
     const { previousPage } = this.state;
     this.setState({
       targetUrl: previousPage,
@@ -37,7 +42,7 @@ class ConnectionsPage extends React.Component {
     this.fetchData();
   }
 
-  getNextData() {
+  getNextData = () => {
     const { nextpage } = this.state;
     this.setState({
       targetUrl: nextpage,
@@ -46,7 +51,7 @@ class ConnectionsPage extends React.Component {
     this.fetchData();
   }
 
-  fetchData() {
+  fetchData = () => {
     const { targetUrl } = this.state;
     axios.get(targetUrl)
       .then((res) => {
@@ -86,7 +91,10 @@ class ConnectionsPage extends React.Component {
         <ConnectionsHeader targetUrl={targetUrl} timestamp={timestamp} />
         <p>
 Selected date:
-          <b>{new Date(timestamp).toString()}</b>
+          <b>
+            {' '}
+            {new Date(timestamp).toString()}
+          </b>
         </p>
         <Datetime
           className={s.datePicker}
@@ -95,6 +103,7 @@ Selected date:
           defaultValue={new Date(timestamp)}
           onChange={this.onDateSelected}
         />
+        <h2>Loaded results</h2>
         <button type="button" onClick={this.getPreviousData}>←</button>
         <button type="button" onClick={this.getNextData}>→</button>
         <table>
