@@ -16,14 +16,16 @@ const ConnectionsHeader = (props) => {
       <div id="urlDiv" className={s.inputDiv}>
         <div className={s.inputDiv__key}>URL</div>
         <div className={s.requestUrl}>
-          <a href={targetUrl}>
-            <span className={s.api}>https://graph.irail.be</span>
-            <span className={s.path}>/sncb</span>
-            <span className={s.feature}>/connections</span>
-            <span className={s.parameters}>{`?departureTime=${timestamp}`}</span>
-          </a>
+          <span className={s.api}>https://graph.irail.be</span>
+          <span className={s.path}>/sncb</span>
+          <span className={s.feature}>/connections</span>
+          <span className={s.parameters}>{`?departureTime=${timestamp}`}</span>
         </div>
       </div>
+      <a href={targetUrl}>
+        Open raw results
+        <span role="img" aria-labelledby="arrow">↗️</span>
+      </a>
     </div>
   );
 };
