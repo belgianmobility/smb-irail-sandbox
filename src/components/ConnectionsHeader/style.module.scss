@@ -1,0 +1,52 @@
+.api {
+    background-color: #f2cca6;
+}
+
+.path {
+    background-color: #e2e5b3;
+}
+
+.feature {
+    background-color: #cab5e3;
+}
+
+.parameters {
+    background-color: #abd7ed;
+}
+
+.requestUrl {
+    a {
+      color: black;
+    }
+    a:hover{
+      color: black;
+    }
+    margin: 0.5em;
+}
+
+.inputDiv {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: stretch;
+    max-width: 1300px;
+    margin: 0 1em 1.25em 0;
+    padding: 0;
+    line-height: 1.2em;
+    background-color: white;
+    border-style: solid;
+    border-width: 0 0 0.2em 0;
+    border-color: #EFEFEF;
+
+    &__key {
+        margin: 0;
+        padding: 0.5em;
+        font-weight: bold;
+        background-color: #EFEFEF;
+        border-radius: 0.25em 0 0 0;
+    }
+}
+
+#requestUrl {
+    margin: 0.5em;
+    overflow-x: auto;
+}
