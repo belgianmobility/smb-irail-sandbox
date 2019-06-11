@@ -1,4 +1,6 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
+// eslint-disable no-console
+
 import { Selector } from 'testcafe';
 
 const { APP_URL_TESTCAFE = 'http://localhost:3000/' } = process.env;
