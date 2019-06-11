@@ -1,73 +1,109 @@
 import React from 'react';
+import propTypes from 'prop-types';
 import axios from 'axios';
 import queryString from 'query-string';
-import './style.module.scss';
+import Datetime from 'react-datetime';
+import ConnectionsHeader from '../../components/ConnectionsHeader';
+
+import s from './style.module.scss';
 
 class ConnectionsPage extends React.Component {
   constructor(props) {
     super(props);
     const value = queryString.parse(props.location.search);
-    const departureTime = value.token || "2019-05-06T14:39:00.000Z";
-    const url = "https://graph.irail.be/sncb/connections?departureTime=" + departureTime;
+    const departureTime = value.token || '2019-05-06T14:39:00.000Z';
+    const url = `https://graph.irail.be/sncb/connections?departureTime=${departureTime}`;
     this.state = {
       targetUrl: url,
-      graph: []
+      timestamp: departureTime,
+      graph: [],
     };
-    this.getNextData = this.getNextData.bind(this);
-    this.getPreviousData = this.getPreviousData.bind(this);
-    this.fetchData = this.fetchData.bind(this);
   }
 
   componentDidMount() {
+    document.title = 'Linked Connections | Sandbox';
     this.fetchData();
   }
 
-  getPreviousData() {
+  onDateSelected = (moment) => {
+    const timestamp = moment.format('Y-MM-DDTHH:MM:SS.000\\Z');
     this.setState({
-      targetUrl: this.state.previousPage,
-      graph: []
+      timestamp,
+      targetUrl: `https://graph.irail.be/sncb/connections?departureTime=${timestamp}`,
+    }, this.fetchData);
+  }
+
+  getPreviousData = () => {
+    const { previousPage } = this.state;
+    this.setState({
+      targetUrl: previousPage,
+      graph: [],
     });
     this.fetchData();
   }
 
-  getNextData() {
+  getNextData = () => {
+    const { nextpage } = this.state;
     this.setState({
-      targetUrl: this.state.previousPage,
-      graph: []
+      targetUrl: nextpage,
+      graph: [],
     });
     this.fetchData();
   }
 
-  fetchData() {
-    axios.get(this.state.targetUrl)
-      .then(res => {
-        const newURL = "?departureTime=" + this.state.targetUrl.split("?departureTime=")[1];
+  fetchData = () => {
+    const { targetUrl } = this.state;
+    axios.get(targetUrl)
+      .then((res) => {
+        const newURL = `?departureTime=${targetUrl.split('?departureTime=')[1]}`;
         window.history.pushState({}, null, newURL);
-        this.setState({ graph: res.data["@graph"], nextpage: res.data["hydra:next"], previousPage: res.data["hydra:previous"] });
+        this.setState({ graph: res.data['@graph'], nextpage: res.data['hydra:next'], previousPage: res.data['hydra:previous'] });
       });
   }
 
   render() {
-    const { graph } = this.state;
-    const items = []
+    const { graph, targetUrl, timestamp } = this.state;
+    const items = [];
 
+    /* eslint-disable no-restricted-syntax */
     for (const [index, connection] of graph.entries()) {
-      items.push(<tr row={index}>
-          <td><a href={connection["@id"]}>{connection["@id"].split("/").pop()}</a></td>
-          <td>{connection["direction"]}</td>
-          <td><a href={connection["departureStop"]}>{connection["departureStop"].split("/").pop()}</a></td>
-          <td><a href={connection["arrivalStop"]}>{connection["arrivalStop"].split("/").pop()}</a></td>
-          <td>{connection["departureTime"].split(".")[0].replace("T", "\n")}</td>
-          <td>{connection["arrivalTime"].split(".")[0].replace("T", "\n")}</td>
-          <td><a href={connection["gtfs:trip"]}>Trip</a><br/><a href={connection["gtfs:route"]}>Route</a></td>
-          <td>{connection["departureDelay"] || "0"}</td>
-          <td>{connection["arrivalDelay"] || "0"}</td>
-        </tr>)
+      items.push(
+        <tr row={index}>
+          <td><a href={connection['@id']}>{connection['@id'].split('/').pop()}</a></td>
+          <td>{connection.direction}</td>
+          <td><a href={connection.departureStop}>{connection.departureStop.split('/').pop()}</a></td>
+          <td><a href={connection.arrivalStop}>{connection.arrivalStop.split('/').pop()}</a></td>
+          <td>{connection.departureTime.split('.')[0].replace('T', '\n')}</td>
+          <td>{connection.arrivalTime.split('.')[0].replace('T', '\n')}</td>
+          <td>
+            <a href={connection['gtfs:trip']}>Trip</a>
+            <br />
+            <a href={connection['gtfs:route']}>Route</a>
+          </td>
+          <td>{connection.departureDelay || '0'}</td>
+          <td>{connection.arrivalDelay || '0'}</td>
+        </tr>,
+      );
     }
 
     return (
       <div>
-        <p>Selected time: {this.state.targetUrl.split("departureTime=")[1]}</p>
+        <ConnectionsHeader targetUrl={targetUrl} timestamp={timestamp} />
+        <p>
+Selected date:
+          <b>
+            {' '}
+            {new Date(timestamp).toString()}
+          </b>
+        </p>
+        <Datetime
+          className={s.datePicker}
+          ref={this.datePicker}
+          input={false}
+          defaultValue={new Date(timestamp)}
+          onChange={this.onDateSelected}
+        />
+        <h2>Loaded results</h2>
         <button type="button" onClick={this.getPreviousData}>←</button>
         <button type="button" onClick={this.getNextData}>→</button>
         <table>
@@ -87,9 +123,13 @@ class ConnectionsPage extends React.Component {
           </tbody>
         </table>
       </div>
-    )
+    );
   }
 }
+
+ConnectionsPage.propTypes = {
+  location: propTypes.instanceOf(Object).isRequired,
+};
 
 
 export default ConnectionsPage;
